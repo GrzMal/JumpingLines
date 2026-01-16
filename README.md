@@ -20,7 +20,7 @@ The parameters for the examples considered in the article are already set in the
 
 ## Files
 
-- [code.txt](code.txt) — Singular code containing procedures for computing interpolation matrices and parameter settings for the examples from the paper.
+- [`code.txt`](code.txt) — Singular code containing procedures for computing interpolation matrices and parameter settings for the examples from the paper.
 
 ## Reference
 
