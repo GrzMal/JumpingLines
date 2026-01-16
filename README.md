@@ -15,7 +15,7 @@ The code provides procedures for computing the **interpolation matrices** introd
 
 ## Usage
 
-Load the file `code.txt` into Singular and execute the procedures as described in the paper.  
+Load the file `code.txt` into Singular and execute the procedures.  
 The parameters for the examples considered in the article are already set in the code and can be modified if needed.
 
 ## Files
