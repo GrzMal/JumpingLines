@@ -1,0 +1,97 @@
+LIB "matrix.lib";
+option(redSB);
+proc der(poly @f, poly @d){
+    int i,j;
+    poly @res=@f;
+    list comp=factorize(@d);
+    for(i=2;i<=size(comp[1]);i++){
+        for(j=1;j<=comp[2][i];j++){
+            @res=diff(@res,comp[1][i]);
+        }
+    }
+return(@res);
+}
+proc derI(ideal @I, poly @d){
+	ideal @res;
+	for(int i=1;i<=size(@I);i++){
+		if(typeof(@I[i])=="poly"){
+			@res[i]=der(@I[i],@d);
+		}
+		else{
+			@res[i]=@I[i];
+		}
+	}
+return(@res);
+}
+proc maxId(int @k){
+	def @r=basering; 
+	ring @R=0,(x,y,z),dp;
+	ideal MI=maxideal(@k);
+	setring @r;
+return(imap(@R,MI));
+}
+proc interpolationMatrixAfB(list L, int d, int m){
+	ideal M=substitute(maxId(d),z,1);
+    int range1=size(M);
+	ideal M2=substitute(maxId(m-1),z,1);
+	int range2=size(M2)+size(L);
+	matrix im[range2][range1];
+	for(int i=1;i<=size(M2);i++){
+		im[i,1..range1]=substitute(derI(M,M2[i]),ideal(x,y),ideal(a,b));
+	}
+	for(i=size(M2)+1;i<=size(M2)+size(L);i++){
+		im[i,1..range1]=substitute(M,ideal(x,y),ideal(L[i-size(M2)][1],L[i-size(M2)][2]));
+	}
+return(im);
+}
+ring RR=(0,e),(a,b,c,x,y,z),dp;
+minpoly=e2-2;
+
+//exemplary points for Example 5.2
+list ptsConL=
+list(3/5,4/5),
+list(1,0),
+list(-1,0),
+list(-3/5,4/5),
+list(12/13,5/13),
+list(-12/13,5/13),
+list(-3/5,-4/5),
+list(3,0),
+list(7,0);
+
+
+//9 pts on y^2=x^3-432, e=\sqrt{2}
+list ptsCub9=
+list(14, 34*e),
+list(14, -34*e),
+list(12, 36),
+list(12, -36),
+list(1376354702/7112889, (36105021721550/18970074963)*e),
+list(4486565317228225/176270815396232, -(296555595792701396043743/3309677046794668485344)*e),
+list(5425/578, (276119/19652)*e),
+list((516052524 - 337969656*e)/2283121, (-15781529943684 + 11000912302800*e)/3449795831),
+list((516052524 + 337969656*e)/2283121, (15781529943684 + 11000912302800*e)/3449795831);
+
+
+//11 pts on y=x^4+1
+list ptsDeg4=
+list(0, 1),
+list(1, 2),
+list(2, 17),
+list(3, 82),
+list(4, 257),
+list(5, 626),
+list(6, 1297),
+list(7, 2402),
+list(8, 4097),
+list(9, 6562),
+list(10, 10001);
+
+matrix A=interpolationMatrixAfB(ptsConL,4,3);
+factorize(det(A));
+
+matrix B=interpolationMatrixAfB(ptsCub9,4,3);
+factorize(det(B));
+
+matrix C=interpolationMatrixAfB(ptsDeg4,5,4);
+factorize(det(C));
